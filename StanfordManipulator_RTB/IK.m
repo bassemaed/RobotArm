@@ -18,7 +18,7 @@ p_y = InTMat(2,4);
 p_z = InTMat(3,4);
 r =  sqrt(p_x^2 + p_y^2);
 OutResult(1) = atan2(p_y,p_x) - atan2(Ind2,sqrt(r^2-(Ind2)^2));
-if(OutResult(1) >InLim(1,2) || OutResult(1)<InLim(1,1))
+if(OutResult(1) >(InLim(1,2)+0.001) || OutResult(1)<(InLim(1,1)-0.001))
     OutResult(1) = atan2(p_y,p_x) - atan2(Ind2,-sqrt(r^2-(Ind2)^2));
 end
 c_1 = cos(OutResult(1));
