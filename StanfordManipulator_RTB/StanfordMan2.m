@@ -28,7 +28,7 @@ alpha0  =   [L1.alpha   L2.alpha    L3.alpha    L4.alpha    L5.alpha    L6.alpha
 %Calculating Transformation Matrix T06_0
 T06_0 = FK(6,theta0,d0,alpha0);
 %Ploting the RobotArm
-MyRobotArm.plot(q0);
+%MyRobotArm.plot(q0);
 %Inverse Kinematics Solution
 %Example Transformation Matrix T06_Input
 %Input Variables [pi/6, pi/3, 10, pi/4, 5*pi/12, pi/2]
@@ -38,24 +38,50 @@ T06_Input = [-0.6597   0.7367  0.1484  5;
     0         0       0       1];
 InvKin1 = IK(T06_Input,qlim,L2.d);
 %Testing IK against FK - 10 times
-TestInputs = zeros(7,6);
-TestInputs(1,:) =   [0    0       0 0       pi/3            pi/2];
-TestInputs(2,:) =   [pi/6 0       0 0       pi/3            pi/2];
-TestInputs(3,:) =   [pi/4 0       0 0       pi/3            pi/2];
-TestInputs(4,:) =   [pi/3 0       0 0       pi/3            pi/2];
-TestInputs(5,:) =   [pi/3 pi/4    0 0       pi/3            pi/2];
-TestInputs(6,:) =   [pi/3 pi/3    0 0       pi/3            pi/2];
-TestInputs(7,:) =   [pi/3 pi/2    0 0       pi/3            pi/2];
-TestInputs(8,:) =   [pi/3 pi/2    0 pi/4    pi/3            pi/2];
-TestInputs(9,:) =   [pi/3 pi/2    0 pi/3    pi/2            pi/2];
-TestInputs(10,:) =  [pi/3 pi/2    0 pi/3    2*pi/3          pi/2];
-TestInputs(11,:) =  [pi/3 pi/2    0 pi/3    3*pi/4          pi/2];
-TestInputs(12,:) =  [pi/3 pi/2    0 pi/3    pi-0.000001     2*pi/3];
-TestInputs(13,:) =  [pi/3 pi/2    0 pi/3    pi-0.000001     3*pi/4];
-TestInputs(14,:) =  [pi/3 pi/2    0 pi/3    pi-0.000001     pi-0.000001];
-TestOutputs = zeros(14,6);
-Error =  zeros(14,6);
-for i=1:14
+TestInputs = zeros(3125,6);
+TestOutputs = zeros(3125,6);
+Error =  zeros(3125,6);
+ThetaSteps = zeros(5,5);
+ThetaSteps(1,:) =[0,pi/6,pi/4,pi/3,pi/3];
+ThetaSteps(2,:) =[0,pi/6,pi/4,pi/3,pi/2];
+ThetaSteps(3,:) =[0,pi/6,pi/4,pi/3,pi/3];
+ThetaSteps(4,:) =[pi/3,pi/2,2*pi/3,3*pi/4,pi-0.001];
+ThetaSteps(5,:) =[pi/2,2*pi/3,3*pi/4,pi-0.00001,pi-0.001];
+x = 1;
+for a1=1:5
+    TestInputs(x:625*a1,1) = ThetaSteps(1,a1);
+    x = 625*a1+1;
+end
+x = 1;
+for y=1:5
+    for a2=1:5
+        TestInputs(x:x+125,2) = ThetaSteps(2,a2);
+        x = x+125+1;
+    end
+end
+x=1;
+for y=1:25
+    for a3=1:5
+        TestInputs(x:x+25,4) = ThetaSteps(3,a3);
+        x = x+25+1;
+    end
+end
+x=1;
+for y =1:125
+    for a4=1:5
+        TestInputs(x:x+5,5) = ThetaSteps(4,a4);
+        x =x+5+1;
+    end
+end
+x=1;
+for y=1:625
+    for a5=1:5
+        TestInputs(x,6) = ThetaSteps(5,a5);
+        x =x+1;
+    end
+end
+%TestInputs(:,3) = d0(3);
+for i=1:3125
     T06_0 = FK(6,TestInputs(i,:),d0,alpha0);
     TestOutputs(i,:) = IK(T06_0,qlim,L2.d);
     Error(i,:) = TestOutputs(i,:) - TestInputs(i,:);
