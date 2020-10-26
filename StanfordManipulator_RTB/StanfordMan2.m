@@ -25,8 +25,10 @@ theta0  =   [pi/6   pi/3    0   pi/4    5*pi/12 pi/2];
 d0      =   [L1.d   L2.d    q0(3)  L4.d    L5.d    L6.d];
 %Position 0 - Joint twist angles
 alpha0  =   [L1.alpha   L2.alpha    L3.alpha    L4.alpha    L5.alpha    L6.alpha];
+%Position 0 - Link length a
+a0  =   [0 0 0 0 0 0];
 %Calculating Transformation Matrix T06_0
-T06_0 = FK(6,theta0,d0,alpha0);
+T06_0 = FK(6,theta0,d0,alpha0, a0);
 %Ploting the RobotArm
 %MyRobotArm.plot(q0);
 %Inverse Kinematics Solution
@@ -82,7 +84,7 @@ for y=1:625
 end
 %TestInputs(:,3) = d0(3);
 for i=1:3125
-    T06_0 = FK(6,TestInputs(i,:),d0,alpha0);
+    T06_0 = FK(6,TestInputs(i,:),d0,alpha0,a0);
     TestOutputs(i,:) = IK(T06_0,qlim,L2.d);
     Error(i,:) = TestOutputs(i,:) - TestInputs(i,:);
     Error(i,3) = TestOutputs(i,3) - d0(3);
